@@ -40,9 +40,9 @@ class CoinTest(unittest.TestCase):
     def test_coin_has_positive_value(self):
         """Coin constructor should not allow non-positive values."""
         for value in [0, -0.5, -1, -10]:
-            with self.subTest(value=value):
-                with self.assertRaises(ValueError):
-                    c = Coin(value, "Ringgit")
+            with self.assertRaises(ValueError):
+                 c = Coin(value, "Ringgit",
+                          f"Coin({value},'Ringgit') should raise ValueError")
 
     def test_add_returns_money(self):
         """You can add Coins, but the result is Money not Coin."""
@@ -55,15 +55,14 @@ class CoinTest(unittest.TestCase):
     def test_add_coin_and_money(self):
         """You can add coin and money. The result is Money (not Coin)."""
         for (value1, value2, sum_value) in [(1,-1,0), (5,0,5), (10,-4, 6)]:
-            with self.subTest(coin_value=value1, money_value=value2, sum_value=sum_value):
-                result = Coin(value1, "Baht") + Money(value2, "Baht")
-                self.assertIsInstance(result, Money)
-                self.assertNotIsInstance(result, Coin, "Result of cash+cash should be Money")
-                self.assertEqual(sum_value, result.value)
-                # try adding in opposite order
-                result2 = Money(value2, "Baht") + Coin(value1, "Baht")
-                self.assertIsInstance(result2, Money)
-                self.assertEqual(result, result2)
+            result = Coin(value1, "Baht") + Money(value2, "Baht")
+            self.assertIsInstance(result, Money)
+            self.assertNotIsInstance(result, Coin, "Result of cash+cash should be Money")
+            self.assertEqual(sum_value, result.value)
+            # try adding in opposite order
+            result2 = Money(value2, "Baht") + Coin(value1, "Baht")
+            self.assertIsInstance(result2, Money)
+            self.assertEqual(result, result2)
 
 
 class BanknoteTest(unittest.TestCase):
@@ -89,9 +88,9 @@ class BanknoteTest(unittest.TestCase):
     def test_banknote_has_positive_value(self):
         """Constructor should not allow non-positive values."""
         for value in [0, -10, -50, -100]:
-            with self.subTest(value=value):
-                with self.assertRaises(ValueError):
-                    c = Banknote(value, "Ringgit")
+            with self.assertRaises(ValueError):
+                c = Banknote(value, "Ringgit",
+                             f"Banknote({value},'Ringgit') should raise ValueError")
 
     def test_banknote_valid_values(self):
         """Value can by any 1, 2, or 5 x power of 10."""
@@ -101,14 +100,13 @@ class BanknoteTest(unittest.TestCase):
                 value = multiple*base
                 note = Banknote(value, "Eth")
                 self.assertEqual(value, note.value, 
-							f"Banknote({value},'Eth') has value {note.value}")
+                            f"Banknote({value},'Eth') has value {note.value}")
 
     def test_banknote_invalid_values(self):
         """Banknotes cannot have arbitrary values."""
         for value in [0.5, 3, 10.5, 4000, 9000000]:
-            with self.subTest(value=value):
-                with self.assertRaises(ValueError):
-                    banknote = Banknote(value, "Ringgit")
+            with self.assertRaises(ValueError):
+                banknote = Banknote(value, "Ringgit")
 
     def test_banknote_must_have_currency(self):
         """Banknote must have a non-empty string currency."""
@@ -126,12 +124,11 @@ class BanknoteTest(unittest.TestCase):
     def test_add_banknote_and_money(self):
         """You can add banknote and money. The result is Money (not Banknote)."""
         for (value1, value2, sum_value) in [(100,-100,0), (500,0,500), (100,-40, 60)]:
-            with self.subTest(banknote_value=value1, money_value=value2, sum_value=sum_value):
-                result = Banknote(value1, "Baht") + Money(value2, "Baht")
-                self.assertIsInstance(result, Money)
-                self.assertNotIsInstance(result, Banknote, "Result of cash+cash should be Money")
-                self.assertEqual(sum_value, result.value)
-                # try adding in opposite order
-                result2 = Money(value2, "Baht") + Banknote(value1, "Baht")
-                self.assertIsInstance(result2, Money)
-                self.assertEqual(result, result2)
+            result = Banknote(value1, "Baht") + Money(value2, "Baht")
+            self.assertIsInstance(result, Money)
+            self.assertNotIsInstance(result, Banknote, "Result of cash+cash should be Money")
+            self.assertEqual(sum_value, result.value)
+            # try adding in opposite order
+            result2 = Money(value2, "Baht") + Banknote(value1, "Baht")
+            self.assertIsInstance(result2, Money)
+            self.assertEqual(result, result2)
